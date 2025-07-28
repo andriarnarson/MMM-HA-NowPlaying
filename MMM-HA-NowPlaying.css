@@ -79,6 +79,55 @@
   text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
 
+.ha-nowplaying-time {
+  font-size: 0.9em;
+  color: #d0d0d0;
+  margin-top: 4px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+.ha-nowplaying-progress-container {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.ha-nowplaying-progress-bar {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.ha-nowplaying-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+}
+
+.ha-nowplaying-time-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8em;
+  color: #d0d0d0;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+.ha-nowplaying-current-time {
+  color: #4CAF50;
+}
+
+.ha-nowplaying-total-time {
+  color: #e0e0e0;
+}
+
 @media (max-width: 400px) {
   .ha-nowplaying-albumart {
     width: 60px;
@@ -97,5 +146,17 @@
   }
   .ha-nowplaying-album {
     font-size: 0.9em;
+  }
+  .ha-nowplaying-time {
+    font-size: 0.8em;
+  }
+  .ha-nowplaying-progress-container {
+    margin-top: 6px;
+  }
+  .ha-nowplaying-progress-bar {
+    height: 3px;
+  }
+  .ha-nowplaying-time-labels {
+    font-size: 0.7em;
   }
 } 
