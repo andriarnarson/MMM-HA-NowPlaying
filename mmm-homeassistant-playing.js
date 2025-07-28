@@ -33,7 +33,9 @@ Module.register("MMM-HA-NowPlaying", {
     },
 
     socketNotificationReceived: function(notification, payload) {
+        Log.info("MMM-HA-NowPlaying: Received notification:", notification);
         if (notification === "HA_DATA_RECEIVED") {
+            Log.info("MMM-HA-NowPlaying: Received HA data:", payload);
             this.nowPlaying = payload;
             this.loaded = true;
             this.updateDom();
@@ -51,6 +53,9 @@ Module.register("MMM-HA-NowPlaying", {
 
     getDom: function() {
         Log.info("MMM-HA-NowPlaying: Rendering DOM");
+        Log.info("MMM-HA-NowPlaying: loaded =", this.loaded);
+        Log.info("MMM-HA-NowPlaying: nowPlaying =", this.nowPlaying);
+        
         var wrapper = document.createElement("div");
         if (!this.loaded) {
             wrapper.innerHTML = "Loading...";
@@ -59,9 +64,26 @@ Module.register("MMM-HA-NowPlaying", {
         if (!this.nowPlaying || !this.nowPlaying.attributes) {
             Log.error("MMM-HA-NowPlaying: No data or attributes available");
             Log.error("MMM-HA-NowPlaying: nowPlaying =", this.nowPlaying);
-            wrapper.innerHTML = "No media playing.";
+            
+            // Show more informative message
+            var info = document.createElement("div");
+            info.className = "ha-nowplaying-info";
+            
+            var titleDiv = document.createElement("div");
+            titleDiv.className = "ha-nowplaying-title";
+            titleDiv.innerHTML = "No Media Playing";
+            info.appendChild(titleDiv);
+            
+            var statusDiv = document.createElement("div");
+            statusDiv.className = "ha-nowplaying-artist";
+            statusDiv.innerHTML = "Sensor: " + this.config.sensor;
+            info.appendChild(statusDiv);
+            
+            wrapper.appendChild(info);
             return wrapper;
         }
+        
+        Log.info("MMM-HA-NowPlaying: Rendering with data:", this.nowPlaying.state);
         var attr = this.nowPlaying.attributes;
         var title = attr.media_title || "Unknown Title";
         var artist = attr.media_artist || "";
@@ -72,6 +94,8 @@ Module.register("MMM-HA-NowPlaying", {
         var currentPosition = attr.media_position || 0;
         var totalDuration = attr.media_duration || 0;
         var timeRemaining = totalDuration - currentPosition;
+
+        Log.info("MMM-HA-NowPlaying: Title =", title, "Artist =", artist, "Duration =", totalDuration);
 
         // Set background image if album art is available
         if (this.config.showAlbumArt && artUrl) {
