@@ -80,43 +80,57 @@
 }
 
 .ha-nowplaying-progress-container {
-  margin-top: 8px;
+  margin-top: 12px;
   width: 100%;
 }
 
 .ha-nowplaying-time-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 0.8em;
-  color: #d0d0d0;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  font-size: 0.75em;
+  color: rgba(255, 255, 255, 0.7);
   font-family: 'Courier New', monospace;
-  font-weight: bold;
-  margin-bottom: 4px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
 }
 
 .ha-nowplaying-current-time {
-  color: #4CAF50;
+  color: #1DB954;
 }
 
 .ha-nowplaying-total-time {
-  color: #e0e0e0;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .ha-nowplaying-progress-bar {
   width: 100%;
-  height: 2px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 1px;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
   overflow: hidden;
+  position: relative;
 }
 
 .ha-nowplaying-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4CAF50, #8BC34A);
-  border-radius: 1px;
-  transition: width 0.3s ease;
-  box-shadow: 0 0 4px rgba(76, 175, 80, 0.5);
+  background: linear-gradient(90deg, #1DB954, #1ed760);
+  border-radius: 2px;
+  transition: width 0.2s ease-out;
+  position: relative;
+}
+
+.ha-nowplaying-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 100%;
+  background: #fff;
+  border-radius: 50%;
+  transform: translateX(50%);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
 }
 
 @media (max-width: 400px) {
@@ -139,12 +153,16 @@
     font-size: 0.9em;
   }
   .ha-nowplaying-progress-container {
-    margin-top: 6px;
+    margin-top: 10px;
   }
   .ha-nowplaying-progress-bar {
-    height: 1px;
+    height: 2px;
   }
   .ha-nowplaying-time-labels {
     font-size: 0.7em;
+    margin-bottom: 4px;
+  }
+  .ha-nowplaying-progress-fill::after {
+    width: 4px;
   }
 } 
