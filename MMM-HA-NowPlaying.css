@@ -40,8 +40,8 @@
 }
 
 .ha-nowplaying-albumart {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
   border-radius: 8px;
   margin-right: 16px;
@@ -103,19 +103,23 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
+.ha-nowplaying-time-separator {
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 4px;
+}
+
 .ha-nowplaying-progress-bar {
   width: 100%;
-  height: 8px;
-  background-color: rgba(255, 0, 0, 0.3);
-  border-radius: 4px;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
   overflow: hidden;
   position: relative;
-  border: 2px solid #ff0000;
 }
 
 .ha-nowplaying-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #ff0000, #ff4444);
+  background: linear-gradient(90deg, #1DB954, #1ed760);
   border-radius: 2px;
   transition: width 0.2s ease-out;
   position: relative;
@@ -126,12 +130,12 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 12px;
+  width: 6px;
   height: 100%;
-  background: #ffff00;
+  background: #fff;
   border-radius: 50%;
   transform: translateX(50%);
-  box-shadow: 0 0 8px rgba(255, 255, 0, 0.8);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
 }
 
 @media (max-width: 400px) {

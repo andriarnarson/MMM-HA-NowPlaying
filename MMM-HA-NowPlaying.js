@@ -125,11 +125,16 @@ Module.register("MMM-HA-NowPlaying", {
             currentTimeLabel.className = "ha-nowplaying-current-time";
             currentTimeLabel.innerHTML = this.formatTime(currentPosition);
             
+            var separator = document.createElement("span");
+            separator.className = "ha-nowplaying-time-separator";
+            separator.innerHTML = " / ";
+            
             var totalTimeLabel = document.createElement("span");
             totalTimeLabel.className = "ha-nowplaying-total-time";
             totalTimeLabel.innerHTML = this.formatTime(totalDuration);
             
             timeLabels.appendChild(currentTimeLabel);
+            timeLabels.appendChild(separator);
             timeLabels.appendChild(totalTimeLabel);
             progressContainer.appendChild(timeLabels);
             
@@ -171,30 +176,28 @@ Module.register("MMM-HA-NowPlaying", {
             this.nowPlaying.attributes.media_duration > 0 && 
             this.nowPlaying.state === 'playing') {
             
+            // Reset the timer state when starting
+            this.lastUpdateTime = Date.now();
+            this.lastPosition = this.nowPlaying.attributes.media_position || 0;
+            
             this.progressTimer = setInterval(function() {
                 // Update the progress without fetching new data
                 if (self.nowPlaying && self.nowPlaying.attributes) {
                     var attr = self.nowPlaying.attributes;
-                    var currentPosition = attr.media_position || 0;
                     var totalDuration = attr.media_duration || 0;
                     
-                    // Estimate current position based on time elapsed
+                    // Calculate elapsed time since last update
                     var now = Date.now();
-                    if (!self.lastUpdateTime) {
-                        self.lastUpdateTime = now;
-                        self.lastPosition = currentPosition;
+                    var timeDiff = (now - self.lastUpdateTime) / 1000; // seconds
+                    var estimatedPosition = self.lastPosition + timeDiff;
+                    
+                    // Update the position for display
+                    if (estimatedPosition <= totalDuration) {
+                        self.nowPlaying.attributes.media_position = estimatedPosition;
+                        self.updateDom();
                     } else {
-                        var timeDiff = (now - self.lastUpdateTime) / 1000; // seconds
-                        var estimatedPosition = self.lastPosition + timeDiff;
-                        
-                        // Update the position for display
-                        if (estimatedPosition <= totalDuration) {
-                            self.nowPlaying.attributes.media_position = estimatedPosition;
-                            self.updateDom();
-                        } else {
-                            // Song finished, stop timer
-                            self.stopProgressTimer();
-                        }
+                        // Song finished, stop timer
+                        self.stopProgressTimer();
                     }
                 }
             }, 1000); // Update every second
