@@ -117,19 +117,7 @@ Module.register("MMM-HA-NowPlaying", {
             var progressContainer = document.createElement("div");
             progressContainer.className = "ha-nowplaying-progress-container";
             
-            // Progress bar
-            var progressBar = document.createElement("div");
-            progressBar.className = "ha-nowplaying-progress-bar";
-            
-            var progressFill = document.createElement("div");
-            progressFill.className = "ha-nowplaying-progress-fill";
-            var progressPercent = (currentPosition / totalDuration) * 100;
-            progressFill.style.width = progressPercent + "%";
-            
-            progressBar.appendChild(progressFill);
-            progressContainer.appendChild(progressBar);
-            
-            // Time labels
+            // Time labels (above the progress bar)
             var timeLabels = document.createElement("div");
             timeLabels.className = "ha-nowplaying-time-labels";
             
@@ -144,6 +132,18 @@ Module.register("MMM-HA-NowPlaying", {
             timeLabels.appendChild(currentTimeLabel);
             timeLabels.appendChild(totalTimeLabel);
             progressContainer.appendChild(timeLabels);
+            
+            // Progress bar (below the time labels)
+            var progressBar = document.createElement("div");
+            progressBar.className = "ha-nowplaying-progress-bar";
+            
+            var progressFill = document.createElement("div");
+            progressFill.className = "ha-nowplaying-progress-fill";
+            var progressPercent = (currentPosition / totalDuration) * 100;
+            progressFill.style.width = progressPercent + "%";
+            
+            progressBar.appendChild(progressFill);
+            progressContainer.appendChild(progressBar);
             
             info.appendChild(progressContainer);
         }
