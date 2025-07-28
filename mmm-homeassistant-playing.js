@@ -62,8 +62,18 @@ Module.register("MMM-HA-NowPlaying", {
         Log.info("MMM-HA-NowPlaying: nowPlaying =", this.nowPlaying);
         
         var wrapper = document.createElement("div");
+        
+        // Simple test display that should always show
+        var testDiv = document.createElement("div");
+        testDiv.innerHTML = "MMM-HA-NowPlaying Module Test - " + (this.loaded ? "Loaded" : "Not Loaded");
+        testDiv.style.color = "red";
+        testDiv.style.fontSize = "20px";
+        wrapper.appendChild(testDiv);
+        
         if (!this.loaded) {
-            wrapper.innerHTML = "Loading...";
+            var loadingDiv = document.createElement("div");
+            loadingDiv.innerHTML = "Loading...";
+            wrapper.appendChild(loadingDiv);
             return wrapper;
         }
         if (!this.nowPlaying || !this.nowPlaying.attributes) {
