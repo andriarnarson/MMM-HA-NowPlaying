@@ -1,4 +1,4 @@
-debugModule.register("MMM-HA-NowPlaying", {
+Module.register("MMM-HA-NowPlaying", {
     // Default module config.
     defaults: {
         haIP: "localhost",
