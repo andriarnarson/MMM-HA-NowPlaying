@@ -1,4 +1,4 @@
-Module.register("MMM-HA-NowPlaying", {
+debugModule.register("MMM-HA-NowPlaying", {
     // Default module config.
     defaults: {
         haIP: "localhost",
@@ -34,11 +34,16 @@ Module.register("MMM-HA-NowPlaying", {
 
     socketNotificationReceived: function(notification, payload) {
         Log.info("MMM-HA-NowPlaying: Received notification:", notification);
+        Log.info("MMM-HA-NowPlaying: Payload type:", typeof payload);
+        Log.info("MMM-HA-NowPlaying: Payload keys:", payload ? Object.keys(payload) : "null");
+        
         if (notification === "HA_DATA_RECEIVED") {
             Log.info("MMM-HA-NowPlaying: Received HA data:", payload);
             this.nowPlaying = payload;
             this.loaded = true;
+            Log.info("MMM-HA-NowPlaying: About to update DOM");
             this.updateDom();
+            Log.info("MMM-HA-NowPlaying: DOM updated");
             
             // Start progress timer if media is playing
             this.startProgressTimer();
@@ -137,14 +142,6 @@ Module.register("MMM-HA-NowPlaying", {
             albumDiv.className = "ha-nowplaying-album";
             albumDiv.innerHTML = album;
             info.appendChild(albumDiv);
-        }
-
-        // Add time remaining if we have duration information
-        if (totalDuration > 0 && timeRemaining > 0) {
-            var timeDiv = document.createElement("div");
-            timeDiv.className = "ha-nowplaying-time";
-            timeDiv.innerHTML = this.formatTime(timeRemaining);
-            info.appendChild(timeDiv);
         }
 
         // Add progress slider if we have duration information

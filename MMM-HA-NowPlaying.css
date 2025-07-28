@@ -79,15 +79,6 @@
   text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
 
-.ha-nowplaying-time {
-  font-size: 0.9em;
-  color: #d0d0d0;
-  margin-top: 4px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-  font-family: 'Courier New', monospace;
-  font-weight: bold;
-}
-
 .ha-nowplaying-progress-container {
   margin-top: 8px;
   width: 100%;
@@ -146,9 +137,6 @@
   }
   .ha-nowplaying-album {
     font-size: 0.9em;
-  }
-  .ha-nowplaying-time {
-    font-size: 0.8em;
   }
   .ha-nowplaying-progress-container {
     margin-top: 6px;
