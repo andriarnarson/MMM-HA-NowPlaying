@@ -1,0 +1,101 @@
+/* MMM-HA-NowPlaying.css */
+
+.MMM-HA-NowPlaying div {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: 15px;
+  padding: 20px;
+  max-width: 400px;
+  margin: 0 auto;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.MMM-HA-NowPlaying div::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: var(--album-art-url, none);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(8px);
+  opacity: 0.8;
+  z-index: -2;
+}
+
+.MMM-HA-NowPlaying div::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: -1;
+}
+
+.ha-nowplaying-albumart {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.ha-nowplaying-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.ha-nowplaying-title {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.ha-nowplaying-artist {
+  font-size: 1.1em;
+  color: #f0f0f0;
+  margin-bottom: 4px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+}
+
+.ha-nowplaying-album {
+  font-size: 1em;
+  color: #e0e0e0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+
+@media (max-width: 400px) {
+  .ha-nowplaying-albumart {
+    width: 60px;
+    height: 60px;
+    margin-right: 12px;
+  }
+  .MMM-HA-NowPlaying div {
+    max-width: 95vw;
+    padding: 16px;
+  }
+  .ha-nowplaying-title {
+    font-size: 1.1em;
+  }
+  .ha-nowplaying-artist {
+    font-size: 1em;
+  }
+  .ha-nowplaying-album {
+    font-size: 0.9em;
+  }
+} 
