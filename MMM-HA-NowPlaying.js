@@ -24,7 +24,7 @@ Module.register("MMM-HA-NowPlaying", {
     },
 
     getStyles: function() {
-        return ["MMM-HA-NowPlaying.css?v=2"];
+        return ["MMM-HA-NowPlaying.css?v=3"];
     },
 
     getData: function() {
@@ -35,6 +35,8 @@ Module.register("MMM-HA-NowPlaying", {
         if (notification === "HA_DATA_RECEIVED") {
             // Check if this is a new song or just a position update
             var isNewSong = false;
+            var preservePosition = false;
+            
             if (this.nowPlaying && payload.attributes) {
                 var currentTitle = this.nowPlaying.attributes.media_title;
                 var newTitle = payload.attributes.media_title;
@@ -44,12 +46,27 @@ Module.register("MMM-HA-NowPlaying", {
                 // If title or duration changed, it's a new song
                 if (currentTitle !== newTitle || currentDuration !== newDuration) {
                     isNewSong = true;
+                } else {
+                    // Same song, preserve our estimated position
+                    preservePosition = true;
                 }
             } else {
                 isNewSong = true; // First time loading
             }
             
+            // Store our current estimated position before updating
+            var estimatedPosition = null;
+            if (preservePosition && this.nowPlaying && this.nowPlaying.attributes) {
+                estimatedPosition = this.nowPlaying.attributes.media_position;
+            }
+            
             this.nowPlaying = payload;
+            
+            // Restore our estimated position if we should preserve it
+            if (preservePosition && estimatedPosition !== null) {
+                this.nowPlaying.attributes.media_position = estimatedPosition;
+            }
+            
             this.loaded = true;
             this.updateDom();
             
