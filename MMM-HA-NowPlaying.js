@@ -24,7 +24,7 @@ Module.register("MMM-HA-NowPlaying", {
     },
 
     getStyles: function() {
-        return ["MMM-HA-NowPlaying.css"];
+        return ["MMM-HA-NowPlaying.css?v=2"];
     },
 
     getData: function() {
