@@ -33,12 +33,30 @@ Module.register("MMM-HA-NowPlaying", {
 
     socketNotificationReceived: function(notification, payload) {
         if (notification === "HA_DATA_RECEIVED") {
+            // Check if this is a new song or just a position update
+            var isNewSong = false;
+            if (this.nowPlaying && payload.attributes) {
+                var currentTitle = this.nowPlaying.attributes.media_title;
+                var newTitle = payload.attributes.media_title;
+                var currentDuration = this.nowPlaying.attributes.media_duration;
+                var newDuration = payload.attributes.media_duration;
+                
+                // If title or duration changed, it's a new song
+                if (currentTitle !== newTitle || currentDuration !== newDuration) {
+                    isNewSong = true;
+                }
+            } else {
+                isNewSong = true; // First time loading
+            }
+            
             this.nowPlaying = payload;
             this.loaded = true;
             this.updateDom();
             
-            // Start progress timer if media is playing
-            this.startProgressTimer();
+            // Only start/restart progress timer if it's a new song or not already running
+            if (isNewSong || !this.progressTimer) {
+                this.startProgressTimer();
+            }
         } else if (notification === "HA_DATA_ERROR") {
             Log.error("MMM-HA-NowPlaying: Error from node_helper:", payload);
             this.loaded = true;

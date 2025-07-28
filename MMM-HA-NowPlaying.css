@@ -40,12 +40,12 @@
 }
 
 .ha-nowplaying-albumart {
-  width: 60px;
-  height: 60px;
+  width: 35px;
+  height: 35px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-right: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  border-radius: 6px;
+  margin-right: 12px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.3);
   position: relative;
   z-index: 1;
 }
@@ -140,9 +140,9 @@
 
 @media (max-width: 400px) {
   .ha-nowplaying-albumart {
-    width: 60px;
-    height: 60px;
-    margin-right: 12px;
+    width: 28px;
+    height: 28px;
+    margin-right: 10px;
   }
   .MMM-HA-NowPlaying div {
     max-width: 95vw;
