@@ -123,11 +123,11 @@ Module.register("MMM-HA-NowPlaying", {
             }
             img.className = "ha-nowplaying-albumart";
             // Force the size with inline styles to override any cached CSS
-            img.style.width = "25px";
-            img.style.height = "25px";
-            img.style.borderRadius = "4px";
-            img.style.marginRight = "10px";
-            img.style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)";
+            img.style.width = "45px";
+            img.style.height = "45px";
+            img.style.borderRadius = "6px";
+            img.style.marginRight = "12px";
+            img.style.boxShadow = "0 3px 12px rgba(0,0,0,0.3)";
             wrapper.appendChild(img);
         }
 
