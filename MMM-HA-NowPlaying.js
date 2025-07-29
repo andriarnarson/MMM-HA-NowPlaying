@@ -127,7 +127,7 @@ Module.register("MMM-HA-NowPlaying", {
             img.style.height = "25px";
             img.style.borderRadius = "4px";
             img.style.marginRight = "10px";
-            img.style.border = "2px solid #ff0000";
+            img.style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)";
             wrapper.appendChild(img);
         }
 
