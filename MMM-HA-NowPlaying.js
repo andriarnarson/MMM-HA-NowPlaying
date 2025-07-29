@@ -255,9 +255,9 @@ Module.register("MMM-HA-NowPlaying", {
         this.lastPosition = null;
     },
 
-    getHeader: function() {
-        return "Now Playing";
-    },
+    //getHeader: function() {
+    //    return "Now Playing";
+    //},
 
     suspend: function() {
         clearInterval(this.timer);
