@@ -24,7 +24,7 @@ Module.register("MMM-HA-NowPlaying", {
     },
 
     getStyles: function() {
-        return ["MMM-HA-NowPlaying.css?v=3"];
+        return ["MMM-HA-NowPlaying.css?v=" + Date.now()];
     },
 
     getData: function() {
@@ -122,6 +122,12 @@ Module.register("MMM-HA-NowPlaying", {
                 img.src = artUrl;
             }
             img.className = "ha-nowplaying-albumart";
+            // Force the size with inline styles to override any cached CSS
+            img.style.width = "25px";
+            img.style.height = "25px";
+            img.style.borderRadius = "4px";
+            img.style.marginRight = "10px";
+            img.style.border = "2px solid #ff0000";
             wrapper.appendChild(img);
         }
 
