@@ -74,9 +74,21 @@ Module.register("MMM-HA-NowPlaying", {
         var album = attr.media_album_name || "";
         var artUrl = attr.entity_picture || "";
         
-        // Get time information - try different possible attribute names
-        var currentPosition = attr.media_position || attr.position || attr.current_position || 0;
-        var totalDuration = attr.media_duration || attr.duration || attr.total_duration || 0;
+        // Get time information - use media_position_updated_at for accurate progress
+        var currentPosition = 0;
+        if (attr.media_position !== undefined && attr.media_position_updated_at) {
+            var updatedAt = new Date(attr.media_position_updated_at).getTime();
+            var now = Date.now();
+            var elapsed = (now - updatedAt) / 1000; // seconds
+            currentPosition = attr.media_position + elapsed;
+            // Clamp to duration
+            if (attr.media_duration) {
+                currentPosition = Math.min(currentPosition, attr.media_duration);
+            }
+        } else {
+            currentPosition = attr.media_position || 0;
+        }
+        var totalDuration = attr.media_duration || 0;
 
         // Set background image if album art is available
         if (this.config.showAlbumArt && artUrl) {
