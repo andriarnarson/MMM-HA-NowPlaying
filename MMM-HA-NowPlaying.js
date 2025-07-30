@@ -21,6 +21,7 @@ Module.register("MMM-HA-NowPlaying", {
         
         // Add a more frequent timer for progress updates when media is playing
         this.progressTimer = null;
+        this.mediaStartTime = null; // Track when media started playing
     },
 
     getStyles: function() {
@@ -72,6 +73,18 @@ Module.register("MMM-HA-NowPlaying", {
             
             // Only start/restart progress timer if it's a new song or not already running
             if (isNewSong || !this.progressTimer) {
+                this.startProgressTimer();
+            }
+            
+            // Update media start time if this is a new song or we don't have one yet
+            if (isNewSong || !this.mediaStartTime) {
+                this.updateMediaStartTime();
+            }
+            
+            // Handle pause/resume scenarios
+            if (this.nowPlaying.state === 'paused') {
+                this.stopProgressTimer();
+            } else if (this.nowPlaying.state === 'playing' && !this.progressTimer) {
                 this.startProgressTimer();
             }
         } else if (notification === "HA_DATA_ERROR") {
@@ -218,6 +231,32 @@ Module.register("MMM-HA-NowPlaying", {
         return minutes.toString().padStart(2, '0') + ":" + remainingSeconds.toString().padStart(2, '0');
     },
 
+    // Calculate media start time based on current position and duration
+    updateMediaStartTime: function() {
+        if (this.nowPlaying && this.nowPlaying.attributes) {
+            var attr = this.nowPlaying.attributes;
+            var currentPosition = attr.media_position || 0;
+            var totalDuration = attr.media_duration || 0;
+            
+            if (totalDuration > 0 && this.nowPlaying.state === 'playing') {
+                // Calculate when the media should have started to reach the current position
+                var now = Date.now();
+                this.mediaStartTime = now - (currentPosition * 1000);
+                
+                // If we already have a mediaStartTime and the API position is ahead of our calculation,
+                // adjust the start time to match the API position
+                if (this.mediaStartTime && this.progressTimer) {
+                    var calculatedPosition = (now - this.mediaStartTime) / 1000;
+                    if (currentPosition > calculatedPosition + 2) { // Allow 2 second tolerance
+                        this.mediaStartTime = now - (currentPosition * 1000);
+                    }
+                }
+            } else {
+                this.mediaStartTime = null;
+            }
+        }
+    },
+
     // Start progress timer for smooth updates
     startProgressTimer: function() {
         var self = this;
@@ -230,10 +269,6 @@ Module.register("MMM-HA-NowPlaying", {
             this.nowPlaying.attributes.media_duration > 0 && 
             this.nowPlaying.state === 'playing') {
             
-            // Reset the timer state when starting
-            this.lastUpdateTime = Date.now();
-            this.lastPosition = this.nowPlaying.attributes.media_position || 0;
-            
             this.progressTimer = setInterval(function() {
                 // Check if media is still playing before updating
                 if (self.nowPlaying && self.nowPlaying.attributes && 
@@ -242,18 +277,20 @@ Module.register("MMM-HA-NowPlaying", {
                     var attr = self.nowPlaying.attributes;
                     var totalDuration = attr.media_duration || 0;
                     
-                    // Calculate elapsed time since last update
-                    var now = Date.now();
-                    var timeDiff = (now - self.lastUpdateTime) / 1000; // seconds
-                    var estimatedPosition = self.lastPosition + timeDiff;
-                    
-                    // Update the position for display
-                    if (estimatedPosition <= totalDuration) {
-                        self.nowPlaying.attributes.media_position = estimatedPosition;
-                        self.updateDom();
-                    } else {
-                        // Song finished, stop timer
-                        self.stopProgressTimer();
+                    // Calculate position based on when media started playing
+                    if (self.mediaStartTime) {
+                        var now = Date.now();
+                        var elapsedTime = (now - self.mediaStartTime) / 1000; // seconds
+                        var estimatedPosition = Math.min(elapsedTime, totalDuration);
+                        
+                        // Update the position for display
+                        if (estimatedPosition <= totalDuration) {
+                            self.nowPlaying.attributes.media_position = estimatedPosition;
+                            self.updateDom();
+                        } else {
+                            // Song finished, stop timer
+                            self.stopProgressTimer();
+                        }
                     }
                 } else {
                     // Media is no longer playing, stop timer
@@ -269,8 +306,7 @@ Module.register("MMM-HA-NowPlaying", {
             clearInterval(this.progressTimer);
             this.progressTimer = null;
         }
-        this.lastUpdateTime = null;
-        this.lastPosition = null;
+        this.mediaStartTime = null;
     },
 
     //getHeader: function() {
