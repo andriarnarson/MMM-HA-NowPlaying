@@ -129,6 +129,19 @@ Module.register("MMM-HA-NowPlaying", {
             img.style.marginBottom = "15px";
             img.style.boxShadow = "0 8px 24px rgba(0,0,0,0.4)";
             wrapper.appendChild(img);
+            
+            // Add pause icon overlay if media is paused
+            if (this.nowPlaying.state === 'paused') {
+                var pauseOverlay = document.createElement("div");
+                pauseOverlay.className = "ha-nowplaying-pause-overlay";
+                
+                var pauseIcon = document.createElement("div");
+                pauseIcon.className = "ha-nowplaying-pause-icon";
+                pauseIcon.innerHTML = "⏸";
+                
+                pauseOverlay.appendChild(pauseIcon);
+                wrapper.appendChild(pauseOverlay);
+            }
         }
 
         var info = document.createElement("div");

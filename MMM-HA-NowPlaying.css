@@ -143,6 +143,41 @@
   box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
 }
 
+.ha-nowplaying-pause-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.ha-nowplaying-pause-icon {
+  font-size: 4em;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
 @media (max-width: 400px) {
   .ha-nowplaying-albumart {
     width: 28px;
@@ -174,5 +209,10 @@
   }
   .ha-nowplaying-progress-fill::after {
     width: 4px;
+  }
+  .ha-nowplaying-pause-icon {
+    font-size: 3em;
+    width: 60px;
+    height: 60px;
   }
 } 
