@@ -21,7 +21,8 @@ Module.register("MMM-HA-NowPlaying", {
         
         // Add a more frequent timer for progress updates when media is playing
         this.progressTimer = null;
-        this.mediaStartTime = null; // Track when media started playing
+        this.lastApiPosition = null; // Track the last API position
+        this.lastApiUpdateTime = null; // Track when we last got an API update
     },
 
     getStyles: function() {
@@ -213,31 +214,7 @@ Module.register("MMM-HA-NowPlaying", {
         return minutes.toString().padStart(2, '0') + ":" + remainingSeconds.toString().padStart(2, '0');
     },
 
-    // Calculate media start time based on current position and duration
-    updateMediaStartTime: function() {
-        if (this.nowPlaying && this.nowPlaying.attributes) {
-            var attr = this.nowPlaying.attributes;
-            var currentPosition = attr.media_position || 0;
-            var totalDuration = attr.media_duration || 0;
-            
-            if (totalDuration > 0 && this.nowPlaying.state === 'playing') {
-                // Calculate when the media should have started to reach the current position
-                var now = Date.now();
-                this.mediaStartTime = now - (currentPosition * 1000);
-                
-                // If we already have a mediaStartTime and the API position is ahead of our calculation,
-                // adjust the start time to match the API position
-                if (this.mediaStartTime && this.progressTimer) {
-                    var calculatedPosition = (now - this.mediaStartTime) / 1000;
-                    if (currentPosition > calculatedPosition + 2) { // Allow 2 second tolerance
-                        this.mediaStartTime = now - (currentPosition * 1000);
-                    }
-                }
-            } else {
-                this.mediaStartTime = null;
-            }
-        }
-    },
+
 
     // Start progress timer for smooth updates
     startProgressTimer: function() {
