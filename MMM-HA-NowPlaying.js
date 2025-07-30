@@ -32,39 +32,24 @@ Module.register("MMM-HA-NowPlaying", {
 
     socketNotificationReceived: function(notification, payload) {
         if (notification === "HA_DATA_RECEIVED") {
-            // Check if this is a new song or just a position update
-            var isNewSong = false;
-            
-            if (this.nowPlaying && payload.attributes) {
-                var currentTitle = this.nowPlaying.attributes.media_title;
-                var newTitle = payload.attributes.media_title;
-                var currentDuration = this.nowPlaying.attributes.media_duration;
-                var newDuration = payload.attributes.media_duration;
-                
-                // If title or duration changed, it's a new song
-                if (currentTitle !== newTitle || currentDuration !== newDuration) {
-                    isNewSong = true;
-                }
-            } else {
-                isNewSong = true; // First time loading
-            }
-            
-            // Always use the API position, don't preserve estimated position
+            // Always use the API position
             this.nowPlaying = payload;
-            
             this.loaded = true;
-            this.updateDom();
             
-            // Handle pause/resume scenarios - no timer needed, just use API updates
-            if (this.nowPlaying.state === 'paused') {
-                this.stopProgressTimer();
+            // Debug logging
+            if (payload && payload.attributes) {
+                Log.info("MMM-HA-NowPlaying: Received data - State:", payload.state, 
+                        "Position:", payload.attributes.media_position, 
+                        "Duration:", payload.attributes.media_duration,
+                        "Title:", payload.attributes.media_title);
             }
+            
+            this.updateDom();
         } else if (notification === "HA_DATA_ERROR") {
             Log.error("MMM-HA-NowPlaying: Error from node_helper:", payload);
             this.loaded = true;
             this.nowPlaying = null;
             this.updateDom();
-            this.stopProgressTimer();
         }
     },
 
@@ -205,17 +190,7 @@ Module.register("MMM-HA-NowPlaying", {
 
 
 
-    // Start progress timer for smooth updates
-    startProgressTimer: function() {
-        // No longer needed - we'll just use API updates
-        // This function is kept for compatibility but does nothing
-    },
 
-    // Stop progress timer
-    stopProgressTimer: function() {
-        // No longer needed - we'll just use API updates
-        // This function is kept for compatibility but does nothing
-    },
 
     //getHeader: function() {
     //    return "Now Playing";
@@ -223,7 +198,6 @@ Module.register("MMM-HA-NowPlaying", {
 
     suspend: function() {
         clearInterval(this.timer);
-        this.stopProgressTimer();
     },
 
     resume: function() {
