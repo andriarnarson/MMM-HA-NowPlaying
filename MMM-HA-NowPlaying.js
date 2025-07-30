@@ -235,8 +235,10 @@ Module.register("MMM-HA-NowPlaying", {
             this.lastPosition = this.nowPlaying.attributes.media_position || 0;
             
             this.progressTimer = setInterval(function() {
-                // Update the progress without fetching new data
-                if (self.nowPlaying && self.nowPlaying.attributes) {
+                // Check if media is still playing before updating
+                if (self.nowPlaying && self.nowPlaying.attributes && 
+                    self.nowPlaying.state === 'playing') {
+                    
                     var attr = self.nowPlaying.attributes;
                     var totalDuration = attr.media_duration || 0;
                     
@@ -253,6 +255,9 @@ Module.register("MMM-HA-NowPlaying", {
                         // Song finished, stop timer
                         self.stopProgressTimer();
                     }
+                } else {
+                    // Media is no longer playing, stop timer
+                    self.stopProgressTimer();
                 }
             }, 1000); // Update every second
         }
