@@ -21,9 +21,13 @@ Module.register("MMM-HA-NowPlaying", {
         
         // Add real-time timer for smooth progress updates
         this.progressTimer = setInterval(function() {
-            if (self.nowPlaying && self.nowPlaying.attributes && 
-                self.nowPlaying.attributes.media_position !== undefined && 
-                self.nowPlaying.attributes.media_position_updated_at) {
+            if (
+                self.nowPlaying &&
+                self.nowPlaying.state === 'playing' &&
+                self.nowPlaying.attributes &&
+                self.nowPlaying.attributes.media_position !== undefined &&
+                self.nowPlaying.attributes.media_position_updated_at
+            ) {
                 self.updateDom();
             }
         }, 1000); // Update every second
@@ -232,9 +236,13 @@ Module.register("MMM-HA-NowPlaying", {
         
         // Restart progress timer
         this.progressTimer = setInterval(function() {
-            if (self.nowPlaying && self.nowPlaying.attributes && 
-                self.nowPlaying.attributes.media_position !== undefined && 
-                self.nowPlaying.attributes.media_position_updated_at) {
+            if (
+                self.nowPlaying &&
+                self.nowPlaying.state === 'playing' &&
+                self.nowPlaying.attributes &&
+                self.nowPlaying.attributes.media_position !== undefined &&
+                self.nowPlaying.attributes.media_position_updated_at
+            ) {
                 self.updateDom();
             }
         }, 1000);
