@@ -19,10 +19,7 @@ Module.register("MMM-HA-NowPlaying", {
             self.getData();
         }, this.config.updateInterval);
         
-        // Add a more frequent timer for progress updates when media is playing
-        this.progressTimer = null;
-        this.lastApiPosition = null; // Track the last API position
-        this.lastApiUpdateTime = null; // Track when we last got an API update
+        // No longer using progress timer - just rely on API updates
     },
 
     getStyles: function() {
@@ -58,17 +55,9 @@ Module.register("MMM-HA-NowPlaying", {
             this.loaded = true;
             this.updateDom();
             
-            // Handle pause/resume scenarios and timer management
+            // Handle pause/resume scenarios - no timer needed, just use API updates
             if (this.nowPlaying.state === 'paused') {
                 this.stopProgressTimer();
-            } else if (this.nowPlaying.state === 'playing') {
-                // Update the API reference position when we get new data
-                if (this.progressTimer) {
-                    this.lastApiPosition = this.nowPlaying.attributes.media_position || 0;
-                    this.lastApiUpdateTime = Date.now();
-                } else {
-                    this.startProgressTimer();
-                }
             }
         } else if (notification === "HA_DATA_ERROR") {
             Log.error("MMM-HA-NowPlaying: Error from node_helper:", payload);
@@ -218,57 +207,14 @@ Module.register("MMM-HA-NowPlaying", {
 
     // Start progress timer for smooth updates
     startProgressTimer: function() {
-        var self = this;
-        if (this.progressTimer) {
-            clearInterval(this.progressTimer);
-        }
-        
-        // Only start if media is playing and has duration
-        if (this.nowPlaying && this.nowPlaying.attributes && 
-            this.nowPlaying.attributes.media_duration > 0 && 
-            this.nowPlaying.state === 'playing') {
-            
-            // Store the API position as our reference point
-            this.lastApiPosition = this.nowPlaying.attributes.media_position || 0;
-            this.lastApiUpdateTime = Date.now();
-            
-            this.progressTimer = setInterval(function() {
-                // Check if media is still playing before updating
-                if (self.nowPlaying && self.nowPlaying.attributes && 
-                    self.nowPlaying.state === 'playing') {
-                    
-                    var attr = self.nowPlaying.attributes;
-                    var totalDuration = attr.media_duration || 0;
-                    
-                    // Calculate position based on the last API position plus elapsed time
-                    var now = Date.now();
-                    var timeSinceApiUpdate = (now - self.lastApiUpdateTime) / 1000; // seconds
-                    var estimatedPosition = self.lastApiPosition + timeSinceApiUpdate;
-                    
-                    // Update the position for display, but don't exceed total duration
-                    if (estimatedPosition <= totalDuration) {
-                        self.nowPlaying.attributes.media_position = estimatedPosition;
-                        self.updateDom();
-                    } else {
-                        // Song finished, stop timer
-                        self.stopProgressTimer();
-                    }
-                } else {
-                    // Media is no longer playing, stop timer
-                    self.stopProgressTimer();
-                }
-            }, 1000); // Update every second
-        }
+        // No longer needed - we'll just use API updates
+        // This function is kept for compatibility but does nothing
     },
 
     // Stop progress timer
     stopProgressTimer: function() {
-        if (this.progressTimer) {
-            clearInterval(this.progressTimer);
-            this.progressTimer = null;
-        }
-        this.lastApiPosition = null;
-        this.lastApiUpdateTime = null;
+        // No longer needed - we'll just use API updates
+        // This function is kept for compatibility but does nothing
     },
 
     //getHeader: function() {
@@ -286,6 +232,5 @@ Module.register("MMM-HA-NowPlaying", {
         this.timer = setInterval(function() {
             self.getData();
         }, this.config.updateInterval);
-        this.startProgressTimer();
     }
 }); 
