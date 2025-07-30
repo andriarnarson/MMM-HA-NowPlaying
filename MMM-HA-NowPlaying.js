@@ -19,7 +19,14 @@ Module.register("MMM-HA-NowPlaying", {
             self.getData();
         }, this.config.updateInterval);
         
-        // No longer using progress timer - just rely on API updates
+        // Add real-time timer for smooth progress updates
+        this.progressTimer = setInterval(function() {
+            if (self.nowPlaying && self.nowPlaying.attributes && 
+                self.nowPlaying.attributes.media_position !== undefined && 
+                self.nowPlaying.attributes.media_position_updated_at) {
+                self.updateDom();
+            }
+        }, 1000); // Update every second
     },
 
     getStyles: function() {
@@ -213,6 +220,7 @@ Module.register("MMM-HA-NowPlaying", {
 
     suspend: function() {
         clearInterval(this.timer);
+        clearInterval(this.progressTimer);
     },
 
     resume: function() {
@@ -221,5 +229,14 @@ Module.register("MMM-HA-NowPlaying", {
         this.timer = setInterval(function() {
             self.getData();
         }, this.config.updateInterval);
+        
+        // Restart progress timer
+        this.progressTimer = setInterval(function() {
+            if (self.nowPlaying && self.nowPlaying.attributes && 
+                self.nowPlaying.attributes.media_position !== undefined && 
+                self.nowPlaying.attributes.media_position_updated_at) {
+                self.updateDom();
+            }
+        }, 1000);
     }
 }); 
