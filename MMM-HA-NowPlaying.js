@@ -42,6 +42,9 @@ Module.register("MMM-HA-NowPlaying", {
                         "Position:", payload.attributes.media_position, 
                         "Duration:", payload.attributes.media_duration,
                         "Title:", payload.attributes.media_title);
+                
+                // Log all available attributes to see what we're getting
+                Log.info("MMM-HA-NowPlaying: All attributes:", JSON.stringify(payload.attributes, null, 2));
             }
             
             this.updateDom();
@@ -71,9 +74,9 @@ Module.register("MMM-HA-NowPlaying", {
         var album = attr.media_album_name || "";
         var artUrl = attr.entity_picture || "";
         
-        // Get time information
-        var currentPosition = attr.media_position || 0;
-        var totalDuration = attr.media_duration || 0;
+        // Get time information - try different possible attribute names
+        var currentPosition = attr.media_position || attr.position || attr.current_position || 0;
+        var totalDuration = attr.media_duration || attr.duration || attr.total_duration || 0;
 
         // Set background image if album art is available
         if (this.config.showAlbumArt && artUrl) {
