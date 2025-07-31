@@ -89,29 +89,18 @@
   white-space: nowrap;
   overflow: hidden;
   position: relative;
+  display: inline-block;
+  max-width: 100%;
 }
 
-.ha-nowplaying-scroll::before {
-  content: attr(data-text);
-  position: absolute;
-  left: 0;
-  top: 0;
-  white-space: nowrap;
-  animation: scroll-text 8s linear infinite;
-  animation-delay: 2s;
+.ha-nowplaying-scroll > span {
+  display: inline-block;
+  animation: marquee 10s linear infinite;
+  animation-delay: 3s;
+  padding-right: 50px;
 }
 
-.ha-nowplaying-scroll::after {
-  content: attr(data-text);
-  position: absolute;
-  left: 100%;
-  top: 0;
-  white-space: nowrap;
-  animation: scroll-text 8s linear infinite;
-  animation-delay: 2s;
-}
-
-@keyframes scroll-text {
+@keyframes marquee {
   0% {
     transform: translateX(0);
   }
@@ -121,8 +110,7 @@
 }
 
 /* Pause scrolling on hover */
-.ha-nowplaying-scroll:hover::before,
-.ha-nowplaying-scroll:hover::after {
+.ha-nowplaying-scroll:hover > span {
   animation-play-state: paused;
 }
 

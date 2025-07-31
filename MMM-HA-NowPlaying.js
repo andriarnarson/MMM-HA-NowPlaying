@@ -147,9 +147,12 @@ Module.register("MMM-HA-NowPlaying", {
         titleDiv.className = "ha-nowplaying-title";
         if (title.length > 24) {
             titleDiv.className += " ha-nowplaying-scroll";
-            titleDiv.setAttribute("data-text", title);
+            var titleSpan = document.createElement("span");
+            titleSpan.innerHTML = title;
+            titleDiv.appendChild(titleSpan);
+        } else {
+            titleDiv.innerHTML = title;
         }
-        titleDiv.innerHTML = title;
         info.appendChild(titleDiv);
 
         if (artist) {
@@ -157,9 +160,12 @@ Module.register("MMM-HA-NowPlaying", {
             artistDiv.className = "ha-nowplaying-artist";
             if (artist.length > 24) {
                 artistDiv.className += " ha-nowplaying-scroll";
-                artistDiv.setAttribute("data-text", artist);
+                var artistSpan = document.createElement("span");
+                artistSpan.innerHTML = artist;
+                artistDiv.appendChild(artistSpan);
+            } else {
+                artistDiv.innerHTML = artist;
             }
-            artistDiv.innerHTML = artist;
             info.appendChild(artistDiv);
         }
 
@@ -168,9 +174,12 @@ Module.register("MMM-HA-NowPlaying", {
             albumDiv.className = "ha-nowplaying-album";
             if (album.length > 24) {
                 albumDiv.className += " ha-nowplaying-scroll";
-                albumDiv.setAttribute("data-text", album);
+                var albumSpan = document.createElement("span");
+                albumSpan.innerHTML = album;
+                albumDiv.appendChild(albumSpan);
+            } else {
+                albumDiv.innerHTML = album;
             }
-            albumDiv.innerHTML = album;
             info.appendChild(albumDiv);
         }
 
