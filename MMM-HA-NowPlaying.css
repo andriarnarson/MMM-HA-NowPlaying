@@ -41,15 +41,14 @@
 }
 
 .ha-nowplaying-albumart {
-  width: 25px;
-  height: 25px;
+  width: 200px;
+  height: 200px;
   object-fit: cover;
-  border-radius: 4px;
-  margin-right: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
   position: relative;
   z-index: 1;
-  border: 2px solid #ff0000;
 }
 
 .ha-nowplaying-info {
