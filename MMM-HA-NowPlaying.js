@@ -153,6 +153,8 @@ Module.register("MMM-HA-NowPlaying", {
             var titleSpan = document.createElement("span");
             titleSpan.innerHTML = title;
             titleDiv.appendChild(titleSpan);
+            // Start JavaScript scrolling
+            this.startScrolling(titleDiv, titleSpan);
         } else {
             titleDiv.innerHTML = title;
         }
@@ -169,6 +171,8 @@ Module.register("MMM-HA-NowPlaying", {
                 var artistSpan = document.createElement("span");
                 artistSpan.innerHTML = artist;
                 artistDiv.appendChild(artistSpan);
+                // Start JavaScript scrolling
+                this.startScrolling(artistDiv, artistSpan);
             } else {
                 artistDiv.innerHTML = artist;
             }
@@ -186,6 +190,8 @@ Module.register("MMM-HA-NowPlaying", {
                 var albumSpan = document.createElement("span");
                 albumSpan.innerHTML = album;
                 albumDiv.appendChild(albumSpan);
+                // Start JavaScript scrolling
+                this.startScrolling(albumDiv, albumSpan);
             } else {
                 albumDiv.innerHTML = album;
             }
@@ -242,6 +248,46 @@ Module.register("MMM-HA-NowPlaying", {
         var minutes = Math.floor(seconds / 60);
         var remainingSeconds = Math.floor(seconds % 60);
         return minutes.toString().padStart(2, '0') + ":" + remainingSeconds.toString().padStart(2, '0');
+    },
+
+    // JavaScript-based scrolling function
+    startScrolling: function(container, span) {
+        var self = this;
+        var position = 0;
+        var direction = -1; // -1 for left, 1 for right
+        var speed = 1; // pixels per frame
+        
+        // Set initial position
+        span.style.position = 'relative';
+        span.style.left = '0px';
+        
+        function scroll() {
+            var containerWidth = container.offsetWidth;
+            var spanWidth = span.offsetWidth;
+            
+            if (spanWidth <= containerWidth) {
+                return; // No need to scroll
+            }
+            
+            position += speed * direction;
+            
+            // Reverse direction when hitting edges
+            if (position <= -(spanWidth - containerWidth)) {
+                direction = 1; // Go right
+            } else if (position >= 0) {
+                direction = -1; // Go left
+            }
+            
+            span.style.left = position + 'px';
+            
+            // Continue scrolling
+            requestAnimationFrame(scroll);
+        }
+        
+        // Start scrolling after a delay
+        setTimeout(function() {
+            scroll();
+        }, 2000);
     },
 
 
