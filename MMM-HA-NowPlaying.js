@@ -145,7 +145,9 @@ Module.register("MMM-HA-NowPlaying", {
 
         var titleDiv = document.createElement("div");
         titleDiv.className = "ha-nowplaying-title";
+        Log.info("MMM-HA-NowPlaying: Title length:", title.length, "Title:", title);
         if (title.length > 24) {
+            Log.info("MMM-HA-NowPlaying: Adding scroll class to title");
             titleDiv.className += " ha-nowplaying-scroll";
             var titleSpan = document.createElement("span");
             titleSpan.innerHTML = title;
@@ -158,7 +160,9 @@ Module.register("MMM-HA-NowPlaying", {
         if (artist) {
             var artistDiv = document.createElement("div");
             artistDiv.className = "ha-nowplaying-artist";
+            Log.info("MMM-HA-NowPlaying: Artist length:", artist.length, "Artist:", artist);
             if (artist.length > 24) {
+                Log.info("MMM-HA-NowPlaying: Adding scroll class to artist");
                 artistDiv.className += " ha-nowplaying-scroll";
                 var artistSpan = document.createElement("span");
                 artistSpan.innerHTML = artist;
@@ -172,7 +176,9 @@ Module.register("MMM-HA-NowPlaying", {
         if (album) {
             var albumDiv = document.createElement("div");
             albumDiv.className = "ha-nowplaying-album";
+            Log.info("MMM-HA-NowPlaying: Album length:", album.length, "Album:", album);
             if (album.length > 24) {
+                Log.info("MMM-HA-NowPlaying: Adding scroll class to album");
                 albumDiv.className += " ha-nowplaying-scroll";
                 var albumSpan = document.createElement("span");
                 albumSpan.innerHTML = album;

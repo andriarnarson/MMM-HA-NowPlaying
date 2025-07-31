@@ -89,18 +89,18 @@
   white-space: nowrap;
   overflow: hidden;
   position: relative;
-  display: inline-block;
-  max-width: 100%;
+  width: 100%;
+  border: 1px solid red; /* Temporary debug border */
 }
 
 .ha-nowplaying-scroll > span {
   display: inline-block;
-  animation: marquee 10s linear infinite;
-  animation-delay: 3s;
-  padding-right: 50px;
+  animation: scroll-left 8s linear infinite;
+  animation-delay: 2s;
+  white-space: nowrap;
 }
 
-@keyframes marquee {
+@keyframes scroll-left {
   0% {
     transform: translateX(0);
   }
