@@ -149,6 +149,7 @@ Module.register("MMM-HA-NowPlaying", {
         if (title.length > 24) {
             Log.info("MMM-HA-NowPlaying: Adding scroll class to title");
             titleDiv.className += " ha-nowplaying-scroll";
+            titleDiv.style.color = "red"; // Debug: make text red when scrolling is applied
             var titleSpan = document.createElement("span");
             titleSpan.innerHTML = title;
             titleDiv.appendChild(titleSpan);
@@ -164,6 +165,7 @@ Module.register("MMM-HA-NowPlaying", {
             if (artist.length > 24) {
                 Log.info("MMM-HA-NowPlaying: Adding scroll class to artist");
                 artistDiv.className += " ha-nowplaying-scroll";
+                artistDiv.style.color = "red"; // Debug: make text red when scrolling is applied
                 var artistSpan = document.createElement("span");
                 artistSpan.innerHTML = artist;
                 artistDiv.appendChild(artistSpan);
@@ -180,6 +182,7 @@ Module.register("MMM-HA-NowPlaying", {
             if (album.length > 24) {
                 Log.info("MMM-HA-NowPlaying: Adding scroll class to album");
                 albumDiv.className += " ha-nowplaying-scroll";
+                albumDiv.style.color = "red"; // Debug: make text red when scrolling is applied
                 var albumSpan = document.createElement("span");
                 albumSpan.innerHTML = album;
                 albumDiv.appendChild(albumSpan);
