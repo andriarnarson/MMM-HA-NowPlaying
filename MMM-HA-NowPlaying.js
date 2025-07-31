@@ -145,12 +145,20 @@ Module.register("MMM-HA-NowPlaying", {
 
         var titleDiv = document.createElement("div");
         titleDiv.className = "ha-nowplaying-title";
+        if (title.length > 24) {
+            titleDiv.className += " ha-nowplaying-scroll";
+            titleDiv.setAttribute("data-text", title);
+        }
         titleDiv.innerHTML = title;
         info.appendChild(titleDiv);
 
         if (artist) {
             var artistDiv = document.createElement("div");
             artistDiv.className = "ha-nowplaying-artist";
+            if (artist.length > 24) {
+                artistDiv.className += " ha-nowplaying-scroll";
+                artistDiv.setAttribute("data-text", artist);
+            }
             artistDiv.innerHTML = artist;
             info.appendChild(artistDiv);
         }
@@ -158,6 +166,10 @@ Module.register("MMM-HA-NowPlaying", {
         if (album) {
             var albumDiv = document.createElement("div");
             albumDiv.className = "ha-nowplaying-album";
+            if (album.length > 24) {
+                albumDiv.className += " ha-nowplaying-scroll";
+                albumDiv.setAttribute("data-text", album);
+            }
             albumDiv.innerHTML = album;
             info.appendChild(albumDiv);
         }
