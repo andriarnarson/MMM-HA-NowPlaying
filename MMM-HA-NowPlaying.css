@@ -89,13 +89,15 @@
   overflow: hidden;
   position: relative;
   width: 100%;
-  border: 1px solid red; /* Temporary debug border */
+  max-width: 100%;
+  display: block;
 }
 
 .ha-nowplaying-scroll > span {
   display: inline-block;
   white-space: nowrap;
   position: relative;
+  will-change: transform;
 }
 
 /* Pause scrolling on hover */

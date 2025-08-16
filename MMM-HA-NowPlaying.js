@@ -149,7 +149,6 @@ Module.register("MMM-HA-NowPlaying", {
         if (title.length > 24) {
             Log.info("MMM-HA-NowPlaying: Adding scroll class to title");
             titleDiv.className += " ha-nowplaying-scroll";
-            titleDiv.style.color = "red"; // Debug: make text red when scrolling is applied
             var titleSpan = document.createElement("span");
             titleSpan.innerHTML = title;
             titleDiv.appendChild(titleSpan);
@@ -167,7 +166,6 @@ Module.register("MMM-HA-NowPlaying", {
             if (artist.length > 24) {
                 Log.info("MMM-HA-NowPlaying: Adding scroll class to artist");
                 artistDiv.className += " ha-nowplaying-scroll";
-                artistDiv.style.color = "red"; // Debug: make text red when scrolling is applied
                 var artistSpan = document.createElement("span");
                 artistSpan.innerHTML = artist;
                 artistDiv.appendChild(artistSpan);
@@ -186,7 +184,6 @@ Module.register("MMM-HA-NowPlaying", {
             if (album.length > 24) {
                 Log.info("MMM-HA-NowPlaying: Adding scroll class to album");
                 albumDiv.className += " ha-nowplaying-scroll";
-                albumDiv.style.color = "red"; // Debug: make text red when scrolling is applied
                 var albumSpan = document.createElement("span");
                 albumSpan.innerHTML = album;
                 albumDiv.appendChild(albumSpan);
@@ -252,14 +249,22 @@ Module.register("MMM-HA-NowPlaying", {
 
     // JavaScript-based scrolling function
     startScrolling: function(container, span) {
-        var self = this;
+        // Clear any existing animation
+        if (span.scrollAnimationId) {
+            cancelAnimationFrame(span.scrollAnimationId);
+        }
+        
         var position = 0;
         var direction = -1; // -1 for left, 1 for right
-        var speed = 1; // pixels per frame
+        var speed = 0.5; // pixels per frame (slower for smoother movement)
+        var pauseAtEnds = 1000; // milliseconds to pause at each end
+        var isPaused = false;
+        var pauseStartTime = 0;
         
         // Set initial position
         span.style.position = 'relative';
         span.style.left = '0px';
+        span.style.transition = 'none'; // Disable CSS transitions for smooth animation
         
         function scroll() {
             var containerWidth = container.offsetWidth;
@@ -269,19 +274,35 @@ Module.register("MMM-HA-NowPlaying", {
                 return; // No need to scroll
             }
             
+            var currentTime = Date.now();
+            
+            // Handle pausing at ends
+            if (isPaused) {
+                if (currentTime - pauseStartTime >= pauseAtEnds) {
+                    isPaused = false;
+                } else {
+                    span.scrollAnimationId = requestAnimationFrame(scroll);
+                    return;
+                }
+            }
+            
             position += speed * direction;
             
             // Reverse direction when hitting edges
             if (position <= -(spanWidth - containerWidth)) {
                 direction = 1; // Go right
+                isPaused = true;
+                pauseStartTime = currentTime;
             } else if (position >= 0) {
                 direction = -1; // Go left
+                isPaused = true;
+                pauseStartTime = currentTime;
             }
             
             span.style.left = position + 'px';
             
             // Continue scrolling
-            requestAnimationFrame(scroll);
+            span.scrollAnimationId = requestAnimationFrame(scroll);
         }
         
         // Start scrolling after a delay
@@ -301,6 +322,15 @@ Module.register("MMM-HA-NowPlaying", {
     suspend: function() {
         clearInterval(this.timer);
         clearInterval(this.progressTimer);
+        
+        // Stop all scrolling animations
+        var scrollingElements = document.querySelectorAll('.ha-nowplaying-scroll span');
+        scrollingElements.forEach(function(span) {
+            if (span.scrollAnimationId) {
+                cancelAnimationFrame(span.scrollAnimationId);
+                span.scrollAnimationId = null;
+            }
+        });
     },
 
     resume: function() {
