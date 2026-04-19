@@ -48,13 +48,15 @@ Module.register("MMM-HA-NowPlaying", {
             var isActive = payload && this.isActiveState(payload.state);
             if (this.config.hideWhenIdle) {
                 if (isActive) { this.show(300); } else { this.hide(300); }
+            } else {
+                this.show(300);
             }
             this.updateDom();
         } else if (notification === "HA_DATA_ERROR") {
             Log.error("MMM-HA-NowPlaying: Error:", payload);
             this.loaded = true;
             this.nowPlaying = null;
-            if (this.config.hideWhenIdle) { this.hide(300); }
+            if (this.config.hideWhenIdle) { this.hide(300); } else { this.show(300); }
             this.updateDom();
         }
     },
