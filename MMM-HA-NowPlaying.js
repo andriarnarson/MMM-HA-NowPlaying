@@ -1,12 +1,12 @@
 Module.register("MMM-HA-NowPlaying", {
-    // Default module config.
     defaults: {
         haIP: "localhost",
         haPort: 8123,
         sensor: "media_player.appletv",
-        updateInterval: 10000, // ms
+        updateInterval: 10000,
         showAlbumArt: true,
-        haToken: "", // Long-Lived Access Token
+        haToken: "",
+        hideWhenIdle: true, // hide module when nothing is playing
     },
 
     start: function() {
@@ -34,7 +34,7 @@ Module.register("MMM-HA-NowPlaying", {
     },
 
     getStyles: function() {
-        return ["MMM-HA-NowPlaying.css?v=" + Date.now()];
+        return ["MMM-HA-NowPlaying.css"];
     },
 
     getData: function() {
@@ -43,28 +43,24 @@ Module.register("MMM-HA-NowPlaying", {
 
     socketNotificationReceived: function(notification, payload) {
         if (notification === "HA_DATA_RECEIVED") {
-            // Always use the API position
             this.nowPlaying = payload;
             this.loaded = true;
-            
-            // Debug logging
-            if (payload && payload.attributes) {
-                Log.info("MMM-HA-NowPlaying: Received data - State:", payload.state, 
-                        "Position:", payload.attributes.media_position, 
-                        "Duration:", payload.attributes.media_duration,
-                        "Title:", payload.attributes.media_title);
-                
-                // Log all available attributes to see what we're getting
-                Log.info("MMM-HA-NowPlaying: All attributes:", JSON.stringify(payload.attributes, null, 2));
+            var isActive = payload && this.isActiveState(payload.state);
+            if (this.config.hideWhenIdle) {
+                if (isActive) { this.show(300); } else { this.hide(300); }
             }
-            
             this.updateDom();
         } else if (notification === "HA_DATA_ERROR") {
-            Log.error("MMM-HA-NowPlaying: Error from node_helper:", payload);
+            Log.error("MMM-HA-NowPlaying: Error:", payload);
             this.loaded = true;
             this.nowPlaying = null;
+            if (this.config.hideWhenIdle) { this.hide(300); }
             this.updateDom();
         }
+    },
+
+    isActiveState: function(state) {
+        return state === "playing" || state === "paused" || state === "buffering";
     },
 
     getDom: function() {
@@ -73,31 +69,27 @@ Module.register("MMM-HA-NowPlaying", {
             wrapper.innerHTML = "Loading...";
             return wrapper;
         }
-        if (!this.nowPlaying || !this.nowPlaying.attributes) {
-            Log.error("MMM-HA-NowPlaying: No data or attributes available");
+        if (!this.nowPlaying || !this.nowPlaying.attributes || !this.isActiveState(this.nowPlaying.state)) {
             wrapper.innerHTML = "No media playing.";
             return wrapper;
         }
-        
+
+        var state = this.nowPlaying.state;
         var attr = this.nowPlaying.attributes;
-        var title = attr.media_title || "Unknown Title";
+        var title = attr.media_title || "";
         var artist = attr.media_artist || "";
         var album = attr.media_album_name || "";
         var artUrl = attr.entity_picture || "";
-        
-        // Get time information - use media_position_updated_at for accurate progress
-        var currentPosition = 0;
-        if (attr.media_position !== undefined && attr.media_position_updated_at) {
+
+        // Only advance position when actually playing (not paused/buffering)
+        var currentPosition = attr.media_position || 0;
+        if (state === "playing" && attr.media_position !== undefined && attr.media_position_updated_at) {
             var updatedAt = new Date(attr.media_position_updated_at).getTime();
-            var now = Date.now();
-            var elapsed = (now - updatedAt) / 1000; // seconds
+            var elapsed = (Date.now() - updatedAt) / 1000;
             currentPosition = attr.media_position + elapsed;
-            // Clamp to duration
             if (attr.media_duration) {
                 currentPosition = Math.min(currentPosition, attr.media_duration);
             }
-        } else {
-            currentPosition = attr.media_position || 0;
         }
         var totalDuration = attr.media_duration || 0;
 
@@ -143,28 +135,26 @@ Module.register("MMM-HA-NowPlaying", {
         var info = document.createElement("div");
         info.className = "ha-nowplaying-info";
 
-        var titleDiv = document.createElement("div");
-        titleDiv.className = "ha-nowplaying-title";
-        Log.info("MMM-HA-NowPlaying: Title length:", title.length, "Title:", title);
-        if (title.length > 24) {
-            Log.info("MMM-HA-NowPlaying: Adding scroll class to title");
-            titleDiv.className += " ha-nowplaying-scroll";
-            var titleSpan = document.createElement("span");
-            titleSpan.innerHTML = title;
-            titleDiv.appendChild(titleSpan);
-            // Start JavaScript scrolling
-            this.startScrolling(titleDiv, titleSpan);
-        } else {
-            titleDiv.innerHTML = title;
+        if (title) {
+            var titleDiv = document.createElement("div");
+            titleDiv.className = "ha-nowplaying-title";
+            if (title.length > 24) {
+                titleDiv.className += " ha-nowplaying-scroll";
+                var titleSpan = document.createElement("span");
+                titleSpan.innerHTML = title;
+                titleDiv.appendChild(titleSpan);
+                // Start JavaScript scrolling
+                this.startScrolling(titleDiv, titleSpan);
+            } else {
+                titleDiv.innerHTML = title;
+            }
+            info.appendChild(titleDiv);
         }
-        info.appendChild(titleDiv);
 
         if (artist) {
             var artistDiv = document.createElement("div");
             artistDiv.className = "ha-nowplaying-artist";
-            Log.info("MMM-HA-NowPlaying: Artist length:", artist.length, "Artist:", artist);
             if (artist.length > 24) {
-                Log.info("MMM-HA-NowPlaying: Adding scroll class to artist");
                 artistDiv.className += " ha-nowplaying-scroll";
                 var artistSpan = document.createElement("span");
                 artistSpan.innerHTML = artist;
@@ -180,9 +170,7 @@ Module.register("MMM-HA-NowPlaying", {
         if (album) {
             var albumDiv = document.createElement("div");
             albumDiv.className = "ha-nowplaying-album";
-            Log.info("MMM-HA-NowPlaying: Album length:", album.length, "Album:", album);
             if (album.length > 24) {
-                Log.info("MMM-HA-NowPlaying: Adding scroll class to album");
                 albumDiv.className += " ha-nowplaying-scroll";
                 var albumSpan = document.createElement("span");
                 albumSpan.innerHTML = album;
