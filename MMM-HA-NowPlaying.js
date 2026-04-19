@@ -6,7 +6,7 @@ Module.register("MMM-HA-NowPlaying", {
         updateInterval: 10000,
         showAlbumArt: true,
         haToken: "",
-        hideWhenIdle: true, // hide module when nothing is playing
+        hideWhenIdle: false, // hide module when nothing is playing
     },
 
     start: function() {
