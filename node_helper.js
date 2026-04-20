@@ -50,26 +50,26 @@ module.exports = NodeHelper.create({
             options.headers["Authorization"] = "Bearer " + config.haToken;
         }
 
+        let done = false;
+        const once = (err, data) => { if (!done) { done = true; callback(err, data); } };
+
         const req = protocol.request(options, function(res) {
             let data = "";
             res.on("data", function(chunk) { data += chunk; });
             res.on("end", function() {
                 if (res.statusCode === 200) {
                     try {
-                        callback(null, JSON.parse(data));
+                        once(null, JSON.parse(data));
                     } catch (e) {
-                        callback("Parse error: " + e.message, null);
+                        once("Parse error: " + e.message, null);
                     }
                 } else {
-                    callback("HTTP " + res.statusCode + ": " + data, null);
+                    once("HTTP " + res.statusCode + ": " + data, null);
                 }
             });
         });
 
-        req.on("error", function(e) {
-            callback("Network error: " + e.message, null);
-        });
-
+        req.on("error", function(e) { once("Network error: " + e.message, null); });
         req.end();
     }
 });

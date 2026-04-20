@@ -39,20 +39,24 @@ Module.register("MMM-HA-NowPlaying", {
         if (notification === "HA_DATA_RECEIVED") {
             this.nowPlaying = payload;
             this.loaded = true;
-            var isActive = payload && this.isActiveState(payload.state);
-            if (this.config.hideWhenIdle) {
-                if (isActive) { this.show(300); } else { this.hide(300); }
-            } else {
-                this.show(300);
-            }
-            this.updateDom();
         } else if (notification === "HA_DATA_ERROR") {
             Log.error("MMM-HA-NowPlaying: Error:", payload);
             this.loaded = true;
             this.nowPlaying = null;
-            if (this.config.hideWhenIdle) { this.hide(300); } else { this.show(300); }
-            this.updateDom();
+        } else {
+            return;
         }
+        var self = this;
+        if (this._updateTimer) { clearTimeout(this._updateTimer); }
+        this._updateTimer = setTimeout(function() {
+            var isActive = self.nowPlaying && self.isActiveState(self.nowPlaying.state);
+            if (self.config.hideWhenIdle) {
+                if (isActive) { self.show(300); } else { self.hide(300); }
+            } else {
+                self.show(300);
+            }
+            self.updateDom();
+        }, 300);
     },
 
     isActiveState: function(state) {
