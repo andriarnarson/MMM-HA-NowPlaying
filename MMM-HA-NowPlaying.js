@@ -7,6 +7,7 @@ Module.register("MMM-HA-NowPlaying", {
         showAlbumArt: true,
         haToken: "",
         hideWhenIdle: false, // hide module when nothing is playing
+        fallbackSensor: "", // fallback media_player entity if primary is idle
     },
 
     start: function() {
