@@ -16,6 +16,7 @@ Module.register("MMM-HA-NowPlaying", {
         this.loaded = false;
         this._updateTimer = null;
         this._lastRendered = undefined;
+        this._hidden = false;
         this.getData();
         this._startTimers();
     },
@@ -52,9 +53,11 @@ Module.register("MMM-HA-NowPlaying", {
         this._updateTimer = setTimeout(function() {
             var isActive = self.nowPlaying && self.isActiveState(self.nowPlaying.state);
             if (self.config.hideWhenIdle) {
-                if (isActive) { self.show(300); } else { self.hide(300); }
-            } else {
+                if (isActive && self._hidden) { self.show(300); self._hidden = false; }
+                else if (!isActive && !self._hidden) { self.hide(300); self._hidden = true; }
+            } else if (self._hidden) {
                 self.show(300);
+                self._hidden = false;
             }
             if (self._contentChanged()) { self.updateDom(); }
         }, 300);
