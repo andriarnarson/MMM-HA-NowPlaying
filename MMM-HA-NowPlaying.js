@@ -14,17 +14,19 @@ Module.register("MMM-HA-NowPlaying", {
         Log.info("MMM-HA-NowPlaying: Module started");
         this.nowPlaying = null;
         this.loaded = false;
+        this._updateTimer = null;
+        this._lastRendered = undefined;
         this.updateDom();
         this.getData();
+        this._startTimers();
+    },
+
+    _startTimers: function() {
         var self = this;
-        this.timer = setInterval(function() {
-            self.getData();
-        }, this.config.updateInterval);
-        
-        // Update progress display every second without rebuilding the DOM
-        this.progressTimer = setInterval(function() {
-            self.updateProgress();
-        }, 1000);
+        clearInterval(this.timer);
+        clearInterval(this.progressTimer);
+        this.timer = setInterval(function() { self.getData(); }, this.config.updateInterval);
+        this.progressTimer = setInterval(function() { self.updateProgress(); }, 1000);
     },
 
     getStyles: function() {
@@ -55,8 +57,21 @@ Module.register("MMM-HA-NowPlaying", {
             } else {
                 self.show(300);
             }
-            self.updateDom();
+            if (self._contentChanged()) { self.updateDom(); }
         }, 300);
+    },
+
+    _contentChanged: function() {
+        var n = this.nowPlaying;
+        var p = this._lastRendered;
+        var key = function(x) {
+            if (!x) return null;
+            var a = x.attributes || {};
+            return [x.entity_id, x.state, a.media_title, a.media_artist, a.media_album_name, a.entity_picture].join("|");
+        };
+        var changed = key(n) !== key(p);
+        if (changed) { this._lastRendered = n; }
+        return changed;
     },
 
     isActiveState: function(state) {
@@ -343,14 +358,7 @@ Module.register("MMM-HA-NowPlaying", {
     },
 
     resume: function() {
-        var self = this;
         this.getData();
-        this.timer = setInterval(function() {
-            self.getData();
-        }, this.config.updateInterval);
-        
-        this.progressTimer = setInterval(function() {
-            self.updateProgress();
-        }, 1000);
+        this._startTimers();
     }
 }); 
