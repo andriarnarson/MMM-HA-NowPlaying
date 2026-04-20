@@ -16,7 +16,6 @@ Module.register("MMM-HA-NowPlaying", {
         this.loaded = false;
         this._updateTimer = null;
         this._lastRendered = undefined;
-        this.updateDom();
         this.getData();
         this._startTimers();
     },
@@ -67,7 +66,8 @@ Module.register("MMM-HA-NowPlaying", {
         var key = function(x) {
             if (!x) return null;
             var a = x.attributes || {};
-            return [x.entity_id, x.state, a.media_title, a.media_artist, a.media_album_name, a.entity_picture].join("|");
+            var art = (a.entity_picture || "").split("?")[0];
+            return [x.entity_id, x.state, a.media_title, a.media_artist, a.media_album_name, art].join("|");
         };
         var changed = key(n) !== key(p);
         if (changed) { this._lastRendered = n; }
