@@ -256,17 +256,19 @@ Module.register("MMM-HA-NowPlaying", {
             !this.nowPlaying.attributes ||
             this.nowPlaying.attributes.media_position === undefined ||
             !this.nowPlaying.attributes.media_position_updated_at ||
-            !this.currentTimeEl ||
-            !this.progressFillEl ||
             !this.totalDuration
         ) { return; }
+
+        var currentTimeEl = document.querySelector('.MMM-HA-NowPlaying .ha-nowplaying-current-time');
+        var progressFillEl = document.querySelector('.MMM-HA-NowPlaying .ha-nowplaying-progress-fill');
+        if (!currentTimeEl || !progressFillEl) { return; }
 
         var attr = this.nowPlaying.attributes;
         var elapsed = (Date.now() - new Date(attr.media_position_updated_at).getTime()) / 1000;
         var position = Math.min(attr.media_position + elapsed, this.totalDuration);
 
-        this.currentTimeEl.innerHTML = this.formatTime(position);
-        this.progressFillEl.style.width = ((position / this.totalDuration) * 100) + "%";
+        currentTimeEl.innerHTML = this.formatTime(position);
+        progressFillEl.style.width = ((position / this.totalDuration) * 100) + "%";
     },
 
     // Helper function to format time in MM:SS format
