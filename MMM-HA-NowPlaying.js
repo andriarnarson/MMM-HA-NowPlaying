@@ -21,18 +21,10 @@ Module.register("MMM-HA-NowPlaying", {
             self.getData();
         }, this.config.updateInterval);
         
-        // Add real-time timer for smooth progress updates
+        // Update progress display every second without rebuilding the DOM
         this.progressTimer = setInterval(function() {
-            if (
-                self.nowPlaying &&
-                self.nowPlaying.state === 'playing' &&
-                self.nowPlaying.attributes &&
-                self.nowPlaying.attributes.media_position !== undefined &&
-                self.nowPlaying.attributes.media_position_updated_at
-            ) {
-                self.updateDom();
-            }
-        }, 1000); // Update every second
+            self.updateProgress();
+        }, 1000);
     },
 
     getStyles: function() {
@@ -197,11 +189,12 @@ Module.register("MMM-HA-NowPlaying", {
             var currentTimeLabel = document.createElement("span");
             currentTimeLabel.className = "ha-nowplaying-current-time";
             currentTimeLabel.innerHTML = this.formatTime(currentPosition);
-            
+            this.currentTimeEl = currentTimeLabel;
+
             var separator = document.createElement("span");
             separator.className = "ha-nowplaying-time-separator";
             separator.innerHTML = " / ";
-            
+
             var totalTimeLabel = document.createElement("span");
             totalTimeLabel.className = "ha-nowplaying-total-time";
             totalTimeLabel.innerHTML = this.formatTime(totalDuration);
@@ -219,6 +212,8 @@ Module.register("MMM-HA-NowPlaying", {
             progressFill.className = "ha-nowplaying-progress-fill";
             var progressPercent = (currentPosition / totalDuration) * 100;
             progressFill.style.width = progressPercent + "%";
+            this.progressFillEl = progressFill;
+            this.totalDuration = totalDuration;
             
             progressBar.appendChild(progressFill);
             progressContainer.appendChild(progressBar);
@@ -228,6 +223,26 @@ Module.register("MMM-HA-NowPlaying", {
 
         wrapper.appendChild(info);
         return wrapper;
+    },
+
+    updateProgress: function() {
+        if (
+            !this.nowPlaying ||
+            this.nowPlaying.state !== 'playing' ||
+            !this.nowPlaying.attributes ||
+            this.nowPlaying.attributes.media_position === undefined ||
+            !this.nowPlaying.attributes.media_position_updated_at ||
+            !this.currentTimeEl ||
+            !this.progressFillEl ||
+            !this.totalDuration
+        ) { return; }
+
+        var attr = this.nowPlaying.attributes;
+        var elapsed = (Date.now() - new Date(attr.media_position_updated_at).getTime()) / 1000;
+        var position = Math.min(attr.media_position + elapsed, this.totalDuration);
+
+        this.currentTimeEl.innerHTML = this.formatTime(position);
+        this.progressFillEl.style.width = ((position / this.totalDuration) * 100) + "%";
     },
 
     // Helper function to format time in MM:SS format
@@ -330,17 +345,8 @@ Module.register("MMM-HA-NowPlaying", {
             self.getData();
         }, this.config.updateInterval);
         
-        // Restart progress timer
         this.progressTimer = setInterval(function() {
-            if (
-                self.nowPlaying &&
-                self.nowPlaying.state === 'playing' &&
-                self.nowPlaying.attributes &&
-                self.nowPlaying.attributes.media_position !== undefined &&
-                self.nowPlaying.attributes.media_position_updated_at
-            ) {
-                self.updateDom();
-            }
+            self.updateProgress();
         }, 1000);
     }
 }); 
