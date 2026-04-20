@@ -49,18 +49,20 @@ Module.register("MMM-HA-NowPlaying", {
             return;
         }
         var self = this;
+        var isActive = this.nowPlaying && this.isActiveState(this.nowPlaying.state);
         if (this._updateTimer) { clearTimeout(this._updateTimer); }
+        // Active state updates fast; delay non-active to avoid spurious flashes
         this._updateTimer = setTimeout(function() {
-            var isActive = self.nowPlaying && self.isActiveState(self.nowPlaying.state);
+            var active = self.nowPlaying && self.isActiveState(self.nowPlaying.state);
             if (self.config.hideWhenIdle) {
-                if (isActive && self._hidden) { self.show(300); self._hidden = false; }
-                else if (!isActive && !self._hidden) { self.hide(300); self._hidden = true; }
+                if (active && self._hidden) { self.show(300); self._hidden = false; }
+                else if (!active && !self._hidden) { self.hide(300); self._hidden = true; }
             } else if (self._hidden) {
                 self.show(300);
                 self._hidden = false;
             }
             if (self._contentChanged()) { self.updateDom(); }
-        }, 300);
+        }, isActive ? 200 : 5000);
     },
 
     _contentChanged: function() {
