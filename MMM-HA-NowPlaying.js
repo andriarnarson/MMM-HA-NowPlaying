@@ -13,6 +13,7 @@ Module.register("MMM-HA-NowPlaying", {
         Log.info("MMM-HA-NowPlaying: Module started");
         this.nowPlaying = null;
         this.loaded = false;
+        this.updateDom();
         this.getData();
         var self = this;
         this.timer = setInterval(function() {
@@ -67,6 +68,7 @@ Module.register("MMM-HA-NowPlaying", {
 
     getDom: function() {
         var wrapper = document.createElement("div");
+        wrapper.className = "ha-nowplaying-card";
         if (!this.loaded) {
             wrapper.innerHTML = "Loading...";
             return wrapper;
@@ -104,34 +106,31 @@ Module.register("MMM-HA-NowPlaying", {
         }
 
         if (this.config.showAlbumArt && artUrl) {
+            var artContainer = document.createElement("div");
+            artContainer.className = "ha-nowplaying-art-container";
+
             var img = document.createElement("img");
-            // If the artUrl is a relative path, prepend the Home Assistant URL
             if (artUrl.startsWith("/")) {
                 img.src = `http://${this.config.haIP}:${this.config.haPort}${artUrl}`;
             } else {
                 img.src = artUrl;
             }
             img.className = "ha-nowplaying-albumart";
-            // Force the size with inline styles to override any cached CSS
             img.style.width = "200px";
             img.style.height = "200px";
-            img.style.borderRadius = "12px";
-            img.style.marginBottom = "15px";
-            img.style.boxShadow = "0 8px 24px rgba(0,0,0,0.4)";
-            wrapper.appendChild(img);
-            
-            // Add pause icon overlay if media is paused
+            artContainer.appendChild(img);
+
             if (this.nowPlaying.state === 'paused') {
                 var pauseOverlay = document.createElement("div");
                 pauseOverlay.className = "ha-nowplaying-pause-overlay";
-                
                 var pauseIcon = document.createElement("div");
                 pauseIcon.className = "ha-nowplaying-pause-icon";
                 pauseIcon.innerHTML = "⏸";
-                
                 pauseOverlay.appendChild(pauseIcon);
-                wrapper.appendChild(pauseOverlay);
+                artContainer.appendChild(pauseOverlay);
             }
+
+            wrapper.appendChild(artContainer);
         }
 
         var info = document.createElement("div");

@@ -1,6 +1,6 @@
 /* MMM-HA-NowPlaying.css */
 
-.MMM-HA-NowPlaying div {
+.ha-nowplaying-card {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -13,7 +13,7 @@
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 
-.MMM-HA-NowPlaying div::before {
+.ha-nowplaying-card::before {
   content: '';
   position: absolute;
   top: 0;
@@ -29,7 +29,7 @@
   z-index: -2;
 }
 
-.MMM-HA-NowPlaying div::after {
+.ha-nowplaying-card::after {
   content: '';
   position: absolute;
   top: 0;
@@ -40,15 +40,19 @@
   z-index: -1;
 }
 
+.ha-nowplaying-art-container {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
 .ha-nowplaying-albumart {
   width: 200px;
   height: 200px;
   object-fit: cover;
   border-radius: 12px;
-  margin-bottom: 15px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  position: relative;
-  z-index: 1;
+  display: block;
 }
 
 .ha-nowplaying-info {
@@ -164,7 +168,7 @@
   box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
 }
 
-.ha-nowplaying-pause-overlay {
+.ha-nowplaying-art-container .ha-nowplaying-pause-overlay {
   position: absolute;
   top: 50%;
   left: 50%;
