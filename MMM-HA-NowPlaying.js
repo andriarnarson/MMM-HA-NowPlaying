@@ -250,12 +250,13 @@ Module.register("MMM-HA-NowPlaying", {
     },
 
     updateProgress: function() {
+        var rendered = this._lastRendered;
         if (
-            !this.nowPlaying ||
-            this.nowPlaying.state !== 'playing' ||
-            !this.nowPlaying.attributes ||
-            this.nowPlaying.attributes.media_position === undefined ||
-            !this.nowPlaying.attributes.media_position_updated_at ||
+            !rendered ||
+            rendered.state !== 'playing' ||
+            !rendered.attributes ||
+            rendered.attributes.media_position === undefined ||
+            !rendered.attributes.media_position_updated_at ||
             !this.totalDuration
         ) { return; }
 
@@ -263,7 +264,7 @@ Module.register("MMM-HA-NowPlaying", {
         var progressFillEl = document.querySelector('.MMM-HA-NowPlaying .ha-nowplaying-progress-fill');
         if (!currentTimeEl || !progressFillEl) { return; }
 
-        var attr = this.nowPlaying.attributes;
+        var attr = rendered.attributes;
         var elapsed = (Date.now() - new Date(attr.media_position_updated_at).getTime()) / 1000;
         var position = Math.min(attr.media_position + elapsed, this.totalDuration);
 
